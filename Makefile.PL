@@ -15,6 +15,8 @@ WriteMakefile(
         'ExtUtils::MakeMaker' => 0,
     },
     BUILD_REQUIRES => {
+        'HTTP::Request::Common' => 0,
+        'Plack::Test' => 0,
         'Test::More' => 0,
     },
     PREREQ_PM => {
