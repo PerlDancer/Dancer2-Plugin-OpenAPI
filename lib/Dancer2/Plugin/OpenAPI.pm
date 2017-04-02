@@ -4,9 +4,12 @@ use 5.006;
 use strict;
 use warnings;
 
+use JSON::Validator::OpenAPI;
+use Dancer2::Plugin;
+
 =head1 NAME
 
-Dancer2::Plugin::OpenAPI - The great new Dancer2::Plugin::OpenAPI!
+Dancer2::Plugin::OpenAPI - OpenAPI plugin for Dancer2
 
 =head1 VERSION
 
@@ -15,7 +18,6 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
-
 
 =head1 SYNOPSIS
 
@@ -28,71 +30,59 @@ Perhaps a little code snippet.
     my $foo = Dancer2::Plugin::OpenAPI->new();
     ...
 
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
 
 =cut
 
-sub function1 {
-}
 
-=head2 function2
+#
+# config attributes
+#
 
-=cut
+has schema => (
+    is => 'ro',
+    required => 1,
+    from_config => 1,
+);
 
-sub function2 {
+
+#
+# other attributes
+#
+
+has _validator => (
+    is => 'ro',
+    default => sub { JSON::Validator::OpenAPI->new },
+);
+
+#
+# BUILD method
+#
+
+sub BUILD {
+    my $plugin = shift;
+    my $app = $plugin->app;
+
+    my $api_spec = $plugin->_validator->_load_schema($plugin->schema);
+    my $paths = $api_spec->get('/paths');
+
+    while (my ($url, $method_spec) = each %$paths) {
+        while (my ($method, $spec) = each %{$method_spec}) {
+            $app->add_route(
+                method => $method,
+                regexp => $url,
+                code => sub {
+                    my $app = shift;
+                    $app->log(debug => "Hit route $url, method $method.");
+                    $app->response->status(200);
+               },
+            );
+        }
+    }
 }
 
 =head1 AUTHOR
 
 Stefan Hornburg (Racke), C<< <racke at linuxia.de> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-dancer2-plugin-openapi at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dancer2-Plugin-OpenAPI>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Dancer2::Plugin::OpenAPI
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker (report bugs here)
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Dancer2-Plugin-OpenAPI>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Dancer2-Plugin-OpenAPI>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Dancer2-Plugin-OpenAPI>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Dancer2-Plugin-OpenAPI/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
 
 
 =head1 LICENSE AND COPYRIGHT
