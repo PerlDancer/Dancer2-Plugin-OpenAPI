@@ -1,0 +1,3 @@
+plugins:
+    OpenAPI:
+        schema: "t/openapi-sample.json"
