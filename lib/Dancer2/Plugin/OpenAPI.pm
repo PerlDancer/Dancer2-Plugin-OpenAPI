@@ -21,18 +21,11 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
+In your Dancer application:
 
     use Dancer2::Plugin::OpenAPI;
 
-    my $foo = Dancer2::Plugin::OpenAPI->new();
-    ...
-
-
 =cut
-
 
 #
 # config attributes
