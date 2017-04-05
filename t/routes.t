@@ -25,6 +25,11 @@ my $url = 'http://localhost';
     my $req = GET "$url/dancers";
     my $res = $test->request( $req );
     is $res->code, 200, "Trying to retrieve dancers from GET $url/dancers";
+
+    # request for a specific dancer
+    $req = GET "$url/dancers/salsa_pula";
+    $res = $test->request( $req );
+    is $res->code, 200, "Trying to retrieve Salsa dancer from GET $url/dancers/salsa_pula";
 }
 
 done_testing;

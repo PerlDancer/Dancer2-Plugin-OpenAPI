@@ -37,7 +37,6 @@ has schema => (
     from_config => 1,
 );
 
-
 #
 # other attributes
 #
@@ -59,10 +58,13 @@ sub BUILD {
     my $paths = $api_spec->get('/paths');
 
     while (my ($url, $method_spec) = each %$paths) {
+        # adjust URLs like "/dancers/{dancerId}"
+        $url =~ s|/\{(.*?)\}|/%$1|g;
+
         while (my ($method, $spec) = each %{$method_spec}) {
             $app->add_route(
                 method => $method,
-                regexp => $url,
+                regexp => qr($url),
                 code => sub {
                     my $app = shift;
                     $app->log(debug => "Hit route $url, method $method.");
