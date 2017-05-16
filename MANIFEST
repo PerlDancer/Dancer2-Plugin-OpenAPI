@@ -7,8 +7,10 @@ MANIFEST.SKIP
 README
 t/00-load.t
 t/01-validate-json.t
+t/environments/routes.yml
 t/manifest.t
 t/openapi-sample.json
 t/pod-coverage.t
 t/pod.t
+t/routes.t
 xt/boilerplate.t
