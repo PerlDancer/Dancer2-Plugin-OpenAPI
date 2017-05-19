@@ -59,7 +59,7 @@ sub BUILD {
 
     while (my ($url, $method_spec) = each %$paths) {
         # adjust URLs like "/dancers/{dancerId}"
-        $url =~ s|/\{(.*?)\}|/%$1|g;
+        $url =~ s|/\{(.*?)\}|/:$1|g;
 
         while (my ($method, $spec) = each %{$method_spec}) {
             $app->add_route(
