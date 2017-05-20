@@ -6,6 +6,7 @@ use warnings;
 
 use JSON::Validator::OpenAPI;
 use Dancer2::Plugin;
+use Types::Standard qw/HashRef/;
 
 =head1 NAME
 
@@ -46,6 +47,49 @@ has _validator => (
     default => sub { JSON::Validator::OpenAPI->new },
 );
 
+has operations => (
+    is => 'ro',
+    isa => HashRef,
+    default => sub { {} },
+);
+
+#
+# keywords
+#
+
+=head2 openapi_operation
+
+Sets Dancer route for operation id $operation_id to subroutine $route_sub:
+
+    openapi_operation showDancerById => sub {
+        my $plugin = shift;
+
+        $plugin->app->log(debug => 'showDancerById');
+    };
+
+=cut
+
+plugin_keywords 'openapi_operation';
+
+sub openapi_operation {
+    my ($plugin, $operation_id, $route_sub) = @_;
+
+    unless ( $operation_id ) {
+        die "Missing operation id for keyword openapi_operation.";
+    }
+
+    unless ( $route_sub ) {
+        die "Missing route sub for keyword openapi_operation.";
+    }
+
+    # check if operation id can be found in specification
+    unless ( exists $plugin->operations->{ $operation_id } ) {
+        die "No such operation exists: $operation_id.";
+    }
+
+    $plugin->operations->{ $operation_id }->{code} = $route_sub;
+};
+
 #
 # BUILD method
 #
@@ -62,15 +106,24 @@ sub BUILD {
         $url =~ s|/\{(.*?)\}|/:$1|g;
 
         while (my ($method, $spec) = each %{$method_spec}) {
-            $app->add_route(
+            my $route = $app->add_route(
                 method => $method,
-                regexp => qr($url),
+                regexp => $url,
                 code => sub {
                     my $app = shift;
-                    $app->log(debug => "Hit route $url, method $method.");
+                    $app->log(debug => "Hit route ", qr($url), " method $method.");
                     $app->response->status(200);
                },
             );
+
+            if ($spec->{operationId}) {
+                $app->log(debug => "Found operation id $spec->{operationId} for url $url.");
+
+                # register it
+                $plugin->operations->{ $spec->{operationId} } = $route;
+            }
+
+            $app->log(debug => "Created route $route for $url and method $method: ", $route->regexp, " from spec: ", $route->spec_route);
         }
     }
 }

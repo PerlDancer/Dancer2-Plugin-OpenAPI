@@ -14,6 +14,14 @@ BEGIN {
     package TestApp;
     use Dancer2;
     use Dancer2::Plugin::OpenAPI;
+
+    openapi_operation showDancerById => sub {
+        my $plugin = shift;
+
+        $plugin->app->log(debug => 'showDancerById');
+
+        status 205;
+    };
 }
 
 my $app = Dancer2->runner->psgi_app;
@@ -29,7 +37,7 @@ my $url = 'http://localhost';
     # request for a specific dancer
     $req = GET "$url/dancers/salsa_pula";
     $res = $test->request( $req );
-    is $res->code, 200, "Trying to retrieve Salsa dancer from GET $url/dancers/salsa_pula";
+    is $res->code, 205, "Trying to retrieve Salsa dancer from GET $url/dancers/salsa_pula";
 }
 
 done_testing;
