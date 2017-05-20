@@ -22,6 +22,7 @@ WriteMakefile(
     PREREQ_PM => {
         'Dancer2' => '0',
         'JSON::Validator' => '0',
+        'Type::Tiny' => '1.000006',
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Dancer2-Plugin-OpenAPI-*' },
