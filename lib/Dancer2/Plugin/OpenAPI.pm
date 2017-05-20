@@ -87,6 +87,7 @@ sub openapi_operation {
         die "No such operation exists: $operation_id.";
     }
 
+    # this hack is necessary, please see Dancer2 issue https://github.com/PerlDancer/Dancer2/issues/1346
     $plugin->operations->{ $operation_id }->{code} = $route_sub;
 };
 
