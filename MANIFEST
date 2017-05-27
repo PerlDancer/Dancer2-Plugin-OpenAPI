@@ -19,4 +19,5 @@ t/operation.t
 t/pod-coverage.t
 t/pod.t
 t/routes.t
+t/schema.t
 xt/boilerplate.t
