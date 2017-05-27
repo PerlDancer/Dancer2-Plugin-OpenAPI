@@ -46,7 +46,7 @@ has schema_source => (
 
 has schema_object => (
     is => 'lazy',
-    isa => InstanceOf('OpenAPI::Schema'),
+    isa => InstanceOf['OpenAPI::Schema'],
 );
 
 sub _build_schema_object {
