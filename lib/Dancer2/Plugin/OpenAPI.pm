@@ -107,6 +107,9 @@ sub openapi_operation {
 
 Stefan Hornburg (Racke), C<< <racke at linuxia.de> >>
 
+=head1 ACKNOWLEDGEMENTS
+
+Peter Mottram - workaround for L<Dancer2::Plugin> warning.
 
 =head1 LICENSE AND COPYRIGHT
 
