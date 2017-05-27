@@ -18,6 +18,7 @@ WriteMakefile(
         'HTTP::Request::Common' => 0,
         'Plack::Test' => 0,
         'Test::More' => 0,
+        'Test::Warnings' => 0,
     },
     PREREQ_PM => {
         'Dancer2' => '0',
