@@ -1,3 +1,3 @@
 plugins:
     OpenAPI:
-        schema: "t/openapi-sample.json"
+        schema_source: "t/openapi-sample.json"

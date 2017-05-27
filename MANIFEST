@@ -1,6 +1,11 @@
 Changes
 ignore.txt
 lib/Dancer2/Plugin/OpenAPI.pm
+lib/OpenAPI/DefinitionClass.pm
+lib/OpenAPI/DefinitionProperty.pm
+lib/OpenAPI/Operation.pm
+lib/OpenAPI/Path.pm
+lib/OpenAPI/Schema.pm
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
@@ -10,6 +15,7 @@ t/01-validate-json.t
 t/environments/routes.yml
 t/manifest.t
 t/openapi-sample.json
+t/operation.t
 t/pod-coverage.t
 t/pod.t
 t/routes.t

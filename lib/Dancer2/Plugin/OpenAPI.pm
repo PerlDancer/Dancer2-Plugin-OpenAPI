@@ -4,9 +4,11 @@ use 5.006;
 use strict;
 use warnings;
 
-use JSON::Validator::OpenAPI;
 use Dancer2::Plugin;
-use Types::Standard qw/HashRef/;
+use Types::Standard qw/HashRef InstanceOf/;
+
+use OpenAPI::Schema;
+use namespace::autoclean;
 
 =head1 NAME
 
@@ -32,7 +34,7 @@ In your Dancer application:
 # config attributes
 #
 
-has schema => (
+has schema_source => (
     is => 'ro',
     required => 1,
     from_config => 1,
@@ -42,16 +44,14 @@ has schema => (
 # other attributes
 #
 
-has _validator => (
-    is => 'ro',
-    default => sub { JSON::Validator::OpenAPI->new },
+has schema_object => (
+    is => 'lazy',
+    isa => InstanceOf('OpenAPI::Schema'),
 );
 
-has operations => (
-    is => 'ro',
-    isa => HashRef,
-    default => sub { {} },
-);
+sub _build_schema_object {
+    return OpenAPI::Schema->new( source => shift->schema_source );
+}
 
 #
 # keywords
@@ -69,7 +69,7 @@ Sets Dancer route for operation id $operation_id to subroutine $route_sub:
 
 =cut
 
-plugin_keywords 'openapi_operation';
+plugin_keywords qw/openapi_operation/;
 
 sub openapi_operation {
     my ($plugin, $operation_id, $route_sub) = @_;
@@ -83,51 +83,25 @@ sub openapi_operation {
     }
 
     # check if operation id can be found in specification
-    unless ( exists $plugin->operations->{ $operation_id } ) {
+    unless ( exists $plugin->schema_object->operations->{ $operation_id } ) {
         die "No such operation exists: $operation_id.";
     }
 
-    # this hack is necessary, please see Dancer2 issue https://github.com/PerlDancer/Dancer2/issues/1346
-    $plugin->operations->{ $operation_id }->{code} = $route_sub;
+    my $operation = $plugin->schema_object->operations->{ $operation_id };
+
+    # now we are going to add the related route
+    my $url = $operation->url;
+
+    # adjust URLs like "/dancers/{dancerId}"
+    $url =~ s|/\{(.*?)\}|/:$1|g;
+
+    my $route = $plugin->app->add_route(
+        method => $operation->method,
+        regexp => $url,
+        code => $route_sub,
+    );
+
 };
-
-#
-# BUILD method
-#
-
-sub BUILD {
-    my $plugin = shift;
-    my $app = $plugin->app;
-
-    my $api_spec = $plugin->_validator->_load_schema($plugin->schema);
-    my $paths = $api_spec->get('/paths');
-
-    while (my ($url, $method_spec) = each %$paths) {
-        # adjust URLs like "/dancers/{dancerId}"
-        $url =~ s|/\{(.*?)\}|/:$1|g;
-
-        while (my ($method, $spec) = each %{$method_spec}) {
-            my $route = $app->add_route(
-                method => $method,
-                regexp => $url,
-                code => sub {
-                    my $app = shift;
-                    $app->log(debug => "Hit route ", qr($url), " method $method.");
-                    $app->response->status(200);
-               },
-            );
-
-            if ($spec->{operationId}) {
-                $app->log(debug => "Found operation id $spec->{operationId} for url $url.");
-
-                # register it
-                $plugin->operations->{ $spec->{operationId} } = $route;
-            }
-
-            $app->log(debug => "Created route $route for $url and method $method: ", $route->regexp, " from spec: ", $route->spec_route);
-        }
-    }
-}
 
 =head1 AUTHOR
 

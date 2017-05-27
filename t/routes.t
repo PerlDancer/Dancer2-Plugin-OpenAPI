@@ -2,6 +2,10 @@ use strict;
 use warnings;
 
 use Test::More;
+
+# we can't use Test::Warnings until Dancer bug #1348 is fixed
+# use Test::Warnings;
+
 use Plack::Test;
 use HTTP::Request::Common;
 
@@ -14,6 +18,17 @@ BEGIN {
     package TestApp;
     use Dancer2;
     use Dancer2::Plugin::OpenAPI;
+
+    openapi_operation addDancer => sub {
+        my $plugin = shift;
+        my $params = params('body');
+
+        # check input and return HTTP code 422 in case of errors
+        $plugin->app->log('debug', 'Operation: addDancer, Params:', $params);
+    };
+
+    openapi_operation listDancers => sub {
+    };
 
     openapi_operation showDancerById => sub {
         my $plugin = shift;
@@ -30,8 +45,12 @@ my $test = Plack::Test->create($app);
 my $url = 'http://localhost';
 
 {
-    my $req = GET "$url/dancers";
+    my $req = POST "$url/dancers", [id => 'salsa', name => 'S. Alsa', tag => 'latin'];
     my $res = $test->request( $req );
+    is $res->code, 200, "Trying to create dancer";
+
+    $req = GET "$url/dancers";
+    $res = $test->request( $req );
     is $res->code, 200, "Trying to retrieve dancers from GET $url/dancers";
 
     # request for a specific dancer

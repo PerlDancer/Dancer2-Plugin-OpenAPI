@@ -59,13 +59,25 @@
       },
       "post": {
         "summary": "Create a dancer",
-        "operationId": "createDancers",
+        "operationId": "addDancer",
         "tags": [
           "dancers"
         ],
+        "parameters": [
+          {
+            "name": "dancer",
+            "in": "body",
+            "description": "Dancer to add to the dance floor",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewDancer"
+            }
+          }
+        ],    
         "responses": {
-          "201": {
-            "description": "Null response"
+          "200": {
+              "description": "Dancer response"
+             
           },
           "default": {
             "description": "unexpected error",
@@ -128,6 +140,21 @@
         }
       }
     },
+      "NewDancer": {
+          "type": "object",
+          "required": [
+              "name"
+          ],
+          "properties": {
+              "name": {
+                  "type": "string"
+              },
+              "tag": {
+                  "type": "string"
+              }
+          }
+      },
+      
     "Dancers": {
       "type": "array",
       "items": {
