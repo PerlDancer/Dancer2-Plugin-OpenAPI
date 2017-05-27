@@ -2,9 +2,7 @@ use strict;
 use warnings;
 
 use Test::More;
-
-# we can't use Test::Warnings until Dancer bug #1348 is fixed
-# use Test::Warnings;
+use Test::Warnings;
 
 use Plack::Test;
 use HTTP::Request::Common;
