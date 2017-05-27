@@ -69,11 +69,18 @@ sub BUILD {
                 );
         }
 
-        $def_objects{$name} = OpenAPI::DefinitionClass->new(
+        # create definition class
+        my %def_class_params = (
             name => $name,
             properties => \@prop_objects,
             required => $spec->{required},
         );
+
+        if (defined $spec->{type}) {
+            $def_class_params{type} = $spec->{type};
+        }
+
+        $def_objects{$name} = OpenAPI::DefinitionClass->new(%def_class_params);
     }
 
     $self->_set_definitions(\%def_objects);

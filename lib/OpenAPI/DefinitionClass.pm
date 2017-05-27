@@ -18,6 +18,12 @@ has required => (
     default => sub { [] },
 );
 
+has type => (
+    is => 'ro',
+    isa => Str,
+    default => sub { '' },
+);
+
 has properties => (
     is => 'ro',
     isa => ArrayRef,
