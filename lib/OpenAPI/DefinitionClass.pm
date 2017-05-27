@@ -30,5 +30,22 @@ has properties => (
     required => 1,
 );
 
+sub validate {
+    my ($self, $vref) = @_;
+    my %errors;
+
+    for my $req (@{$self->{required}}) {
+        unless (exists $vref->{$req} && defined $vref->{$req} && $vref->{$req} =~ /\S/) {
+            $errors{$req} = 'Value missing for required property';
+        }
+    }
+
+    if (keys %errors) {
+        return undef, \%errors;
+    }
+
+    return 1;
+}
+
 1;
 
