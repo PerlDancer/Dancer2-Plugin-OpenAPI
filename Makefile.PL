@@ -24,6 +24,7 @@ WriteMakefile(
         'Dancer2' => '0',
         'JSON::Validator' => '0',
         'Type::Tiny' => '1.000006',
+        'JSON::Schema::AsType' => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Dancer2-Plugin-OpenAPI-*' },
