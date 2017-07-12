@@ -8,7 +8,6 @@ use Dancer2::Plugin;
 use Types::Standard qw/HashRef InstanceOf/;
 
 use OpenAPI::Schema;
-use namespace::autoclean;
 
 =head1 NAME
 
