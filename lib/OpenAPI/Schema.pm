@@ -47,7 +47,7 @@ has paths => (
 
 sub BUILD {
     my $self = shift;
-    my $api_spec = $self->_validator->_load_schema( $self->source );
+    my $api_spec = $self->_validator->load_and_validate_schema( $self->source );
 
     # go through definitions
     my $defs = $api_spec->get('/definitions');
