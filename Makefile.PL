@@ -22,7 +22,7 @@ WriteMakefile(
     },
     PREREQ_PM => {
         'Dancer2' => '0',
-        'JSON::Validator' => '0',
+        'JSON::Validator' => '0.96',
         'Type::Tiny' => '1.000006',
         'JSON::Schema::AsType' => 0,
     },
