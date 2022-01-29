@@ -13,6 +13,9 @@ use OpenAPI::Schema;
 
 Dancer2::Plugin::OpenAPI - OpenAPI plugin for Dancer2
 
+Please note that this module is B<not working> and at the moment B<abandoned>.
+Contact the author for more information.
+
 =head1 VERSION
 
 Version 0.01
